@@ -19,11 +19,13 @@
 
     $carrito = unserialize(carrito());
 
+    /* 2.D. Reducir las existencias del artículo al crear una factura, e impedir su creación si al
+            hacerlo se quedara algún artículo con existencias negativas.*/
+            
     if (obtener_post('_testigo') !== null) {
-        // Crear factura
         $pdo = conectar();
         
-        //Impedir su creación si al hacerlo se quedara algún artículo con existencias negativas.
+        // Impedir la creación de factura si al hacerlo se quedara algún artículo con existencias negativas.
         $sent = $pdo->prepare('SELECT *
                                FROM articulos
                                WHERE id IN (:ids)');
@@ -37,7 +39,7 @@
             }
         }
 
-        //CREAR FACTURA
+        // Crear Factura.
         $usuario = \App\Tablas\Usuario::logueado();
         $usuario_id = $usuario->id;
         $pdo->beginTransaction(); //Solo lo ha utilizado aquí.
@@ -63,7 +65,7 @@
                                VALUES $values");
         $sent->execute($execute);
 
-        //Reducir las existencias del artículo al crear una factura.
+        // Reducir las existencias del artículo al crear una factura.
         foreach ($lineas as $id => $linea) {
             $cantidad = $linea->getCantidad();
             $sent = $pdo->prepare('UPDATE articulos

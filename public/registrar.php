@@ -34,6 +34,9 @@ session_start() ?>
         $clases_input[$e] = '';
     }
 
+    /* 1.A. La contraseña debe tener una longitud mínima de 8 caracteres, y debe contener, al
+            menos, una minúscula, una mayúscula, un dígito y un signo de puntuación. */
+
     if (isset($login, $password, $password_repeat)) {
         $pdo = conectar();
 
@@ -45,7 +48,6 @@ session_start() ?>
             $error['login'][] = 'El usuario ya existe.';
         }
 
-        //probar si con "else if" funciona correctamente.
         if ($password != $password_repeat) {
             $error['password'][] = 'Las contraseñas no coinciden.';
         }
@@ -58,23 +60,27 @@ session_start() ?>
             $error['password_repeat'][] = 'La contraseña es obligatoria.';
         }
 
+        // Debe contener al menos una minúscula.
         if (preg_match('/[a-z]/', $password) !== 1) {
             $error['password'][] = 'Debe contener al menos una minúscula.';
         }
 
+        // Debe contener al menos una mayúscula.
         if (preg_match('/[A-Z]/', $password) !== 1) {
             $error['password'][] = 'Debe contener al menos una mayúscula.';
         }
 
+        // Debe contener al menos un dígito.
         if (preg_match('/[[:digit:]]/', $password) !== 1) {
             $error['password'][] = 'Debe contener al menos un dígito.';
         }
 
+        // Debe contener al menos un signo de puntuación..
         if (preg_match('/[[:punct:]]/', $password) !== 1) {
             $error['password'][] = 'Debe contener al menos un signo de puntuación.';
         }
 
-        //La contraseña debe tener una longitud mínima de 8 caracteres.
+        // La contraseña debe tener una longitud mínima de 8 caracteres.
         if (mb_strlen($password) < 8) {
             $error['password'][] = 'Debe tener al menos 8 caracteres.';
         }
@@ -94,6 +100,7 @@ session_start() ?>
             $_SESSION['exito'] = 'El usuario se ha registrado correctamente.';
             return redirigir_login();
         } else {
+            // Errores.
             foreach (['login', 'password', 'password_repeat'] as $e) {
                 if (isset($error[$e])) {
                     $clases_input[$e] = $clases_input_error;
@@ -103,6 +110,10 @@ session_start() ?>
         }
     }
     ?>
+
+    <!-- 1.B. El mensaje de error correspondiente debe indicar qué le falta a la contraseña 
+              para ser correcta según los criterios indicados en el apartado a). -->
+
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
         <div class="mx-72">
@@ -110,6 +121,7 @@ session_start() ?>
                 <div class="mb-6">
                     <label for="login" class="block mb-2 text-sm font-medium <?= $clases_label['login'] ?>">Nombre de usuario</label>
                     <input type="text" name="login" id="login" class="border text-sm rounded-lg block w-full p-2.5 <?= $clases_input['login'] ?>" value="<?= hh($login) ?>">
+                    <!-- Errores en el login -->
                     <?php foreach ($error['login'] as $err) : ?>
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-bold">¡Error!</span> <?= $err ?></p>
                     <?php endforeach ?>
@@ -117,6 +129,7 @@ session_start() ?>
                 <div class="mb-6">
                     <label for="password" class="block mb-2 text-sm font-medium <?= $clases_label['password'] ?>">Contraseña</label>
                     <input type="password" name="password" id="password" class="border text-sm rounded-lg block w-full p-2.5  <?= $clases_input['password'] ?>">
+                    <!-- Errores en el password -->
                     <?php foreach ($error['password'] as $err): ?>
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-bold">¡Error!</span> <?= $err ?></p>
                     <?php endforeach ?>
@@ -124,6 +137,7 @@ session_start() ?>
                 <div class="mb-6">
                     <label for="password_repeat" class="block mb-2 text-sm font-medium <?= $clases_label['password_repeat'] ?>">Confirmar contraseña</label>
                     <input type="password" name="password_repeat" id="password_repeat" class="border text-sm rounded-lg block w-full p-2.5  <?= $clases_input['password_repeat'] ?>">
+                    <!-- Errores en el password_repeat -->
                     <?php foreach ($error['password_repeat'] as $err) : ?>
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-bold">¡Error!</span> <?= $err ?></p>
                     <?php endforeach ?>

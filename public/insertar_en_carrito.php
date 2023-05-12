@@ -18,6 +18,7 @@ try {
         return volver();
     }
 
+    // 2.C. Hacer el control de las existencias.
     if ($articulo->getStock() <= 0) {
         $_SESSION['error'] = 'No hay existencias suficientes.';
         return volver();

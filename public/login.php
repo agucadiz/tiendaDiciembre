@@ -14,26 +14,35 @@
     <?php
     require '../vendor/autoload.php';
 
-    $login = obtener_post('login');
-    $password = obtener_post('password');
+    $login = obtener_post('login'); // Nombre de usuario.
+    $password = obtener_post('password'); // Contraseña.
 
     $clases_label = '';
     $clases_input = '';
     $error = false;
 
+    /* 1.3.D. Evitar que un usuario no validado pueda iniciar sesión. En caso de que lo intente,
+              se debe mostrar un mensaje de error con un alert que avise al usuario de que aún no ha sido
+              validado por el administrador. */
     if (isset($login, $password)) {
-        if ($usuario = \App\Tablas\Usuario::comprobar($login, $password)) {
+        if ($usuario = \App\Tablas\Usuario::comprobar($login, $password)) { 
+            if (!$usuario->validado) {
+                // Mostrar error de validación
+                $_SESSION['error'] = 'El usuario no está validado.';
+                return volver();
+            }
             // Loguear al usuario
             $_SESSION['login'] = serialize($usuario);
             return $usuario->es_admin() ? volver_admin() : volver();
         } else {
-            // Mostrar error de validación
+            // Mostrar error de usuario o contraseña incorrectos.
             $error = true;
             $clases_label = "text-red-700 dark:text-red-500";
             $clases_input = "bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400";
         }
     }
     ?>
+
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
         <?php require '../src/_alerts.php' ?>
@@ -42,7 +51,7 @@
                 <div class="mb-6">
                     <label for="login" class="block mb-2 text-sm font-medium <?= $clases_label ?>">Nombre de usuario</label>
                     <input type="text" name="login" id="login" class="border text-sm rounded-lg block w-full p-2.5 <?= $clases_input ?>">
-                    <?php if ($error): ?>
+                    <?php if ($error) : ?>
                         <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-bold">¡Error!</span> Nombre de usuario o contraseña incorrectos</p>
                     <?php endif ?>
                 </div>

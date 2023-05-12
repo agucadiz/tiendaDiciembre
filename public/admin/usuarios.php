@@ -14,9 +14,9 @@
     <?php
     require '../../vendor/autoload.php';
 
-    //Implementar un mecanismo de validación de usuarios:
+    /* 3.B. Mostrar una lista de los usuarios en la URL /admin/usuarios.php, 
+            a la que sólo podrá acceder el usuario administrador. */
 
-    //Mostrar una lista de los usuarios en la URL /admin/usuarios.php, a la que sólo podrá acceder el usuario administrador.
     if ($usuario = \App\Tablas\Usuario::logueado()) {
         if (!$usuario->es_admin()) {
             $_SESSION['error'] = 'Acceso no autorizado.';
@@ -39,9 +39,10 @@
     $sent = $pdo->query("SELECT * FROM usuarios ORDER BY usuario");
     ?>
 
-    <!-- Al lado de cada usuario en la lista del apartado b), mostrar un botón «Invalidar»
-    o «Validar», dependiendo de si el usuario está o no validado, respectivamente. El botón
-    «Validar» validará al usuario y el «Invalidar» lo invalidará. -->
+    <!-- 3.C. Al lado de cada usuario, mostrar un botón «Invalidar» o «Validar»,
+              dependiendo de si el usuario está o no validado, respectivamente. El botón
+              «Validar» validará al usuario y el «Invalidar» lo invalidará. -->
+              
     <div class="container mx-auto">
         <?php require '../../src/_menu.php' ?>
         <?php require '../../src/_alerts.php' ?>

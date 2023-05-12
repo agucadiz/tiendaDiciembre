@@ -9,11 +9,14 @@ class Usuario extends Modelo
 
     public $id;
     public $usuario;
+    public $validado; // Si ha sido validado por el administrador.
 
     public function __construct(array $campos)
     {
         $this->id = $campos['id'];
         $this->usuario = $campos['usuario'];
+        $this->validado = $campos['validado']; // Si ha sido validado por el administrador.
+
     }
 
     public function es_admin(): bool
